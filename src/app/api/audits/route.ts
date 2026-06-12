@@ -34,7 +34,7 @@ export async function POST(req: Request) {
           "q11", "q12", "q13", "q14", "q15",
           "q16", "q17", "q18", "q19", "q20",
           "q21", "q22", "q23", "q24", "q25",
-          "totalScore", "status"
+          "totalScore", "status", "remarks"
         ) VALUES (
           ${data.workZone}, ${data.auditDate}, ${data.zoneLeader}, ${data.auditorName},
           ${data.scores[0]}, ${data.scores[1]}, ${data.scores[2]}, ${data.scores[3]}, ${data.scores[4]},
@@ -42,7 +42,7 @@ export async function POST(req: Request) {
           ${data.scores[10]}, ${data.scores[11]}, ${data.scores[12]}, ${data.scores[13]}, ${data.scores[14]},
           ${data.scores[15]}, ${data.scores[16]}, ${data.scores[17]}, ${data.scores[18]}, ${data.scores[19]},
           ${data.scores[20]}, ${data.scores[21]}, ${data.scores[22]}, ${data.scores[23]}, ${data.scores[24]},
-          ${data.totalScore}, 'SUBMITTED'
+          ${data.totalScore}, 'SUBMITTED', ${JSON.stringify(data.remarks || [])}
         ) RETURNING id
       `;
 

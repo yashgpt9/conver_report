@@ -66,6 +66,7 @@ export default function AuditFormClient({ auditorName }: { auditorName: string }
   const [zoneLeader, setZoneLeader] = useState('');
   
   const [scores, setScores] = useState<number[]>(Array(25).fill(0));
+  const [remarks, setRemarks] = useState<string[]>(Array(25).fill(''));
   
   const [actionPlan, setActionPlan] = useState([
     { slNo: '1', nonConformance: '', correction: '', correctiveAction: '', targetDate: '', responsibility: '', status: '' },
@@ -84,6 +85,12 @@ export default function AuditFormClient({ auditorName }: { auditorName: string }
     setScores(newScores);
   };
 
+  const handleRemarkChange = (index: number, value: string) => {
+    const newRemarks = [...remarks];
+    newRemarks[index] = value;
+    setRemarks(newRemarks);
+  };
+
   const handleActionPlanChange = (index: number, field: string, value: string) => {
     const newPlan = [...actionPlan];
     (newPlan[index] as any)[field] = value;
@@ -97,7 +104,7 @@ export default function AuditFormClient({ auditorName }: { auditorName: string }
     try {
       const payload = {
         workZone, auditDate, zoneLeader, auditorName,
-        scores, totalScore, actionPlan
+        scores, remarks, totalScore, actionPlan
       };
 
       const res = await fetch('/api/audits', {
@@ -140,7 +147,7 @@ export default function AuditFormClient({ auditorName }: { auditorName: string }
         </div>
         <div className="border border-black p-2 font-bold flex gap-2">
           <span className="whitespace-nowrap">AUDIT DATE:</span> 
-          <input required type="date" value={auditDate} onChange={e => setAuditDate(e.target.value)} className="text-black font-bold w-full outline-none bg-slate-100 focus:bg-white px-1" />
+          <input required type="date" value={auditDate} readOnly className="text-black font-bold w-full outline-none bg-slate-100 cursor-not-allowed px-1" />
         </div>
         <div className="border border-black p-2 font-bold flex gap-2">
           <span className="whitespace-nowrap">ZONE LEADER:</span> 
@@ -198,24 +205,13 @@ export default function AuditFormClient({ auditorName }: { auditorName: string }
                       </td>
                     ))}
                     <td className="border border-black p-1">
-                      <input type="text" className="w-full text-xs text-black font-bold outline-none bg-slate-100 focus:bg-white px-1" />
+                      <input type="text" value={remarks[globalQIndex]} onChange={(e) => handleRemarkChange(globalQIndex, e.target.value)} className="w-full text-xs text-black font-bold outline-none bg-slate-100 focus:bg-white px-1" />
                     </td>
                   </tr>
                 );
               })
             ))}
-            <tr>
-              <td colSpan={3} className="bg-[#b4c6e7] font-bold border border-black p-2 text-center">TOTAL MARKS</td>
-              <td colSpan={6} className="font-bold border border-black p-2 text-center text-sm">100</td>
-            </tr>
-            <tr>
-              <td colSpan={3} className="bg-[#b4c6e7] font-bold border border-black p-2 text-center">TOTAL OBTAIN MARKS</td>
-              <td colSpan={6} className="font-bold border border-black p-2 text-center text-sm">{totalScore}</td>
-            </tr>
-            <tr>
-              <td colSpan={3} className="bg-[#b4c6e7] font-bold border border-black p-2 text-center">SCORE %</td>
-              <td colSpan={6} className="font-bold border border-black p-2 text-center text-sm">{totalScore}</td>
-            </tr>
+            {/* Total Marks hidden from auditor view */}
           </tbody>
         </table>
       </div>
