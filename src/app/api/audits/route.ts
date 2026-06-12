@@ -25,6 +25,19 @@ export async function POST(req: Request) {
 
     const data = await req.json();
 
+    // Check if zone already has an audit this month
+    const existing = await sql`
+      SELECT id FROM "Audit"
+      WHERE "workZone" = ${data.workZone}
+      AND EXTRACT(MONTH FROM "createdAt") = EXTRACT(MONTH FROM CURRENT_DATE)
+      AND EXTRACT(YEAR FROM "createdAt") = EXTRACT(YEAR FROM CURRENT_DATE)
+      LIMIT 1
+    `;
+
+    if (existing.length > 0) {
+      return NextResponse.json({ error: 'An audit for this zone has already been submitted this month. Please ask a supervisor to unlock it if you need to resubmit.' }, { status: 400 });
+    }
+
     const result = await sql.begin(async (sql) => {
       const newId = crypto.randomUUID();
 

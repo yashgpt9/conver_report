@@ -9,7 +9,12 @@ export async function DELETE(req: Request, { params }: { params: Promise<{ id: s
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
     const { id } = await params;
-    await sql`DELETE FROM "Audit" WHERE id = ${id}`;
+    
+    await sql.begin(async sql => {
+      await sql`DELETE FROM "ActionPlanItem" WHERE "auditId" = ${id}`;
+      await sql`DELETE FROM "Audit" WHERE id = ${id}`;
+    });
+    
     return NextResponse.json({ success: true });
   } catch (e: any) {
     return NextResponse.json({ error: e.message }, { status: 500 });

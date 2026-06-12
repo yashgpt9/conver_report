@@ -1,7 +1,9 @@
 import sql from '@/lib/db';
 import Link from 'next/link';
 import SignOutButton from '@/components/SignOutButton';
+import DeleteAuditButton from '@/components/DeleteAuditButton';
 import { getSession } from '@/lib/auth';
+import { FIXED_ZONES } from '@/lib/constants';
 
 export const dynamic = 'force-dynamic';
 
@@ -15,6 +17,16 @@ export default async function DashboardPage() {
   } catch (e) {
     console.error("Failed to fetch audits", e);
   }
+
+  const currentMonth = new Date().getMonth();
+  const currentYear = new Date().getFullYear();
+  
+  const completedZonesThisMonth = audits
+    .filter(a => {
+      const d = new Date(a.createdAt);
+      return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
+    })
+    .map(a => a.workZone);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -34,7 +46,38 @@ export default async function DashboardPage() {
         </div>
       </nav>
 
-      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
+      <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
+        
+        {/* Compliance Tracker */}
+        <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
+          <div className="p-6 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
+            <h2 className="text-xl font-bold text-slate-800">Monthly Zone Compliance</h2>
+            <span className="text-sm font-bold text-slate-500 bg-slate-200 px-3 py-1 rounded-full">
+              {new Date().toLocaleString('default', { month: 'long', year: 'numeric' })}
+            </span>
+          </div>
+          <div className="p-6">
+            <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">
+              {FIXED_ZONES.map(zone => {
+                const isCompleted = completedZonesThisMonth.includes(zone);
+                return (
+                  <div key={zone} className={`p-4 rounded-lg border-2 flex flex-col items-center justify-center text-center gap-2 transition-colors ${
+                    isCompleted 
+                      ? 'bg-green-50 border-green-200 text-green-800' 
+                      : 'bg-red-50 border-red-200 text-red-800'
+                  }`}>
+                    <span className="font-bold text-sm">{zone}</span>
+                    <span className={`text-xs font-bold px-2 py-1 rounded-full ${
+                      isCompleted ? 'bg-green-200 text-green-900' : 'bg-red-200 text-red-900'
+                    }`}>
+                      {isCompleted ? '✓ Completed' : 'Pending'}
+                    </span>
+                  </div>
+                );
+              })}
+            </div>
+          </div>
+        </div>
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
           <div className="p-6 border-b border-slate-200 bg-slate-50">
             <h2 className="text-xl font-bold text-slate-800">Recent Audits</h2>
@@ -71,6 +114,7 @@ export default async function DashboardPage() {
                       <Link href={`/dashboard/${audit.id}`} className="text-blue-600 hover:text-blue-900 transition-colors">
                         Review & Print
                       </Link>
+                      <DeleteAuditButton id={audit.id} zoneName={audit.workZone} />
                     </td>
                   </tr>
                 ))}

@@ -1,6 +1,7 @@
 "use client";
 
-import { useState, useRef } from 'react';
+import { useState, useRef, useEffect } from 'react';
+import { FIXED_ZONES } from '@/lib/constants';
 
 const PHASES = [
   {
@@ -62,6 +63,7 @@ const PHASES = [
 
 export default function AuditFormClient({ auditorName }: { auditorName: string }) {
   const [workZone, setWorkZone] = useState('');
+  const [completedZones, setCompletedZones] = useState<string[]>([]);
   const [auditDate, setAuditDate] = useState(new Date().toISOString().split('T')[0]);
   const [zoneLeader, setZoneLeader] = useState('');
   const [auditor, setAuditor] = useState('');
@@ -77,6 +79,16 @@ export default function AuditFormClient({ auditorName }: { auditorName: string }
 
   const [loading, setLoading] = useState(false);
   const submittingRef = useRef(false);
+
+  useEffect(() => {
+    // Fetch zones that have already submitted an audit this month
+    fetch('/api/audits/completed-zones')
+      .then(res => res.json())
+      .then(data => {
+        if (data.completedZones) setCompletedZones(data.completedZones);
+      })
+      .catch(err => console.error("Failed to load completed zones", err));
+  }, []);
 
   const calculateTotalScore = () => scores.reduce((a, b) => a + b, 0);
   const totalScore = calculateTotalScore();
@@ -149,7 +161,14 @@ export default function AuditFormClient({ auditorName }: { auditorName: string }
       <div className="grid grid-cols-1 sm:grid-cols-2 text-sm border border-black mb-4">
         <div className="border border-black p-2 font-bold flex gap-2">
           <span className="whitespace-nowrap">WORK ZONE:</span> 
-          <input required type="text" value={workZone} onChange={e => setWorkZone(e.target.value)} className="text-black font-bold w-full outline-none bg-slate-100 focus:bg-white px-1" />
+          <select required value={workZone} onChange={e => setWorkZone(e.target.value)} className="text-black font-bold w-full outline-none bg-slate-100 focus:bg-white px-1">
+            <option value="" disabled>Select a Zone</option>
+            {FIXED_ZONES.map(zone => (
+              <option key={zone} value={zone} disabled={completedZones.includes(zone)}>
+                {zone} {completedZones.includes(zone) ? '(Already Submitted)' : ''}
+              </option>
+            ))}
+          </select>
         </div>
         <div className="border border-black p-2 font-bold flex gap-2">
           <span className="whitespace-nowrap">AUDIT DATE:</span> 
