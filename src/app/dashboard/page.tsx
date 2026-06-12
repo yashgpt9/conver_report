@@ -2,31 +2,43 @@ import sql from '@/lib/db';
 import Link from 'next/link';
 import SignOutButton from '@/components/SignOutButton';
 import DeleteAuditButton from '@/components/DeleteAuditButton';
+import DashboardFilters from '@/components/DashboardFilters';
 import { getSession } from '@/lib/auth';
 import { FIXED_ZONES } from '@/lib/constants';
 
 export const dynamic = 'force-dynamic';
 
-export default async function DashboardPage() {
+export default async function DashboardPage({ searchParams }: { searchParams: Promise<{ month?: string, zone?: string }> }) {
   const session = await getSession();
   const userName = session?.user?.name || 'Supervisor';
 
+  const { month, zone } = await searchParams;
+  const currentMonthStr = new Date().toISOString().substring(0, 7);
+  const selectedMonth = month || currentMonthStr; // "YYYY-MM"
+  const selectedZone = zone || "ALL";
+
   let audits: any[] = [];
   try {
-    audits = await sql`SELECT * FROM "Audit" ORDER BY "createdAt" DESC`;
+    if (selectedZone === "ALL") {
+      audits = await sql`
+        SELECT * FROM "Audit" 
+        WHERE "auditDate" LIKE ${selectedMonth + '%'} 
+        ORDER BY "auditDate" DESC, "createdAt" DESC
+      `;
+    } else {
+      audits = await sql`
+        SELECT * FROM "Audit" 
+        WHERE "auditDate" LIKE ${selectedMonth + '%'} 
+        AND "workZone" = ${selectedZone}
+        ORDER BY "auditDate" DESC, "createdAt" DESC
+      `;
+    }
   } catch (e) {
     console.error("Failed to fetch audits", e);
   }
 
-  const currentMonth = new Date().getMonth();
-  const currentYear = new Date().getFullYear();
-  
-  const completedZonesThisMonth = audits
-    .filter(a => {
-      const d = new Date(a.createdAt);
-      return d.getMonth() === currentMonth && d.getFullYear() === currentYear;
-    })
-    .map(a => a.workZone);
+  // Calculate completed zones for the selected month to render the compliance tracker
+  const completedZonesThisMonth = audits.map(a => a.workZone);
 
   return (
     <div className="min-h-screen bg-slate-50">
@@ -48,16 +60,19 @@ export default async function DashboardPage() {
 
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8 space-y-8">
         
+        {/* Filters */}
+        <DashboardFilters />
+        
         {/* Compliance Tracker */}
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
           <div className="p-6 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
             <div className="flex items-center gap-4">
               <h2 className="text-xl font-bold text-slate-800">Monthly Zone Compliance</h2>
               <span className="text-sm font-bold text-slate-500 bg-slate-200 px-3 py-1 rounded-full">
-                {new Date().toLocaleString('default', { month: 'long', year: 'numeric' })}
+                {selectedMonth}
               </span>
             </div>
-            <Link href="/dashboard/report" className="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold shadow-sm hover:bg-blue-700 transition-colors">
+            <Link href={`/dashboard/report?month=${selectedMonth}`} className="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold shadow-sm hover:bg-blue-700 transition-colors">
               View Plant Report &rarr;
             </Link>
           </div>
