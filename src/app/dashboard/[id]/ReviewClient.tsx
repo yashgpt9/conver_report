@@ -60,6 +60,10 @@ export default function ReviewClient({ audit }: { audit: any }) {
     return audit[`q${idx}`] as number;
   };
 
+  const safeRemarks = typeof audit.remarks === 'string'
+    ? (() => { try { return JSON.parse(audit.remarks) } catch(e) { return [] } })()
+    : (audit.remarks || []);
+
   // We inject the user's exact CSS into a <style> tag so it perfectly styles the printed document
   const cssStyles = `
     * { box-sizing: border-box; }
@@ -164,137 +168,137 @@ export default function ReviewClient({ audit }: { audit: any }) {
                       <td rowSpan={5} className="bg-light-blue">"1S"-SHORTING<br/>"SEIRI"</td>
                       <td className="text-left">Awareness of Concerned person about sorting phase</td>
                       <td className="text-left">Skill Matrix/Verbal communication</td>
-                      <td><span className="check">{q(1) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(1) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(1) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(1) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(1) === 4 ? '✓' : ''}</span></td><td>{audit.remarks && audit.remarks[0] ? audit.remarks[0] : ''}</td>
+                      <td><span className="check">{q(1) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(1) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(1) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(1) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(1) === 4 ? '✓' : ''}</span></td><td>{safeRemarks[0] || ""}</td>
                   </tr>
                   <tr>
                       <td className="text-left">Only Required Material present in area.Obsolete & Unnaccessory material/ Equipement removed or red tagged.</td>
                       <td className="text-left">List of Items/ Red Tag Activity</td>
-                      <td><span className="check">{q(2) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(2) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(2) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(2) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(2) === 4 ? '✓' : ''}</span></td><td>{audit.remarks && audit.remarks[1] ? audit.remarks[1] : ''}</td>
+                      <td><span className="check">{q(2) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(2) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(2) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(2) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(2) === 4 ? '✓' : ''}</span></td><td>{safeRemarks[1] || ""}</td>
                   </tr>
                   <tr>
                       <td className="text-left">Involvement of Supervisors and Department heads in Sorting activity</td>
                       <td className="text-left">Daily Checksheet Review</td>
-                      <td><span className="check">{q(3) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(3) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(3) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(3) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(3) === 4 ? '✓' : ''}</span></td><td>{audit.remarks && audit.remarks[2] ? audit.remarks[2] : ''}</td>
+                      <td><span className="check">{q(3) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(3) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(3) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(3) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(3) === 4 ? '✓' : ''}</span></td><td>{safeRemarks[2] || ""}</td>
                   </tr>
                   <tr>
                       <td className="text-left">Storage area is defined to store broken, unusable or occasionally used items.</td>
                       <td className="text-left">5S Layout Plan</td>
-                      <td><span className="check">{q(4) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(4) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(4) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(4) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(4) === 4 ? '✓' : ''}</span></td><td>{audit.remarks && audit.remarks[3] ? audit.remarks[3] : ''}</td>
+                      <td><span className="check">{q(4) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(4) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(4) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(4) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(4) === 4 ? '✓' : ''}</span></td><td>{safeRemarks[3] || ""}</td>
                   </tr>
                   <tr>
                       <td className="text-left">Only Job-related documents stored in the work zone and other waste disposition is proper</td>
                       <td className="text-left">Doc. File/Disposal Bins/Scrap Note</td>
-                      <td><span className="check">{q(5) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(5) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(5) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(5) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(5) === 4 ? '✓' : ''}</span></td><td>{audit.remarks && audit.remarks[4] ? audit.remarks[4] : ''}</td>
+                      <td><span className="check">{q(5) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(5) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(5) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(5) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(5) === 4 ? '✓' : ''}</span></td><td>{safeRemarks[4] || ""}</td>
                   </tr>
 
                   <tr>
                       <td rowSpan={4} className="bg-light-blue">"2S"SET IN ORDER<br/>"SEITON"</td>
                       <td className="text-left">Awareness of Concerned person about Set in Order phase</td>
                       <td className="text-left">Skill Matrix/Verbal communication</td>
-                      <td><span className="check">{q(6) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(6) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(6) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(6) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(6) === 4 ? '✓' : ''}</span></td><td>{audit.remarks && audit.remarks[5] ? audit.remarks[5] : ''}</td>
+                      <td><span className="check">{q(6) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(6) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(6) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(6) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(6) === 4 ? '✓' : ''}</span></td><td>{safeRemarks[5] || ""}</td>
                   </tr>
                   <tr>
                       <td className="text-left">Equipement/Machinery is clearly identified (Number/Name/Color Code) & Placed at Proeperly defined location</td>
                       <td className="text-left">Equipement/ Item Identification</td>
-                      <td><span className="check">{q(7) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(7) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(7) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(7) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(7) === 4 ? '✓' : ''}</span></td><td>{audit.remarks && audit.remarks[6] ? audit.remarks[6] : ''}</td>
+                      <td><span className="check">{q(7) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(7) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(7) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(7) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(7) === 4 ? '✓' : ''}</span></td><td>{safeRemarks[6] || ""}</td>
                   </tr>
                   <tr>
                       <td className="text-left">Is Material Placed as per defined layout plan and Everything put back to its defined place?</td>
                       <td className="text-left">5S Layout Plan/Ergonomic Chart</td>
-                      <td><span className="check">{q(8) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(8) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(8) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(8) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(8) === 4 ? '✓' : ''}</span></td><td>{audit.remarks && audit.remarks[7] ? audit.remarks[7] : ''}</td>
+                      <td><span className="check">{q(8) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(8) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(8) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(8) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(8) === 4 ? '✓' : ''}</span></td><td>{safeRemarks[7] || ""}</td>
                   </tr>
                   <tr>
                       <td className="text-left">Are Cupboards/Walkways clear, Unblocked and area well organized</td>
                       <td className="text-left">Physical Verification</td>
-                      <td><span className="check">{q(9) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(9) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(9) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(9) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(9) === 4 ? '✓' : ''}</span></td><td>{audit.remarks && audit.remarks[8] ? audit.remarks[8] : ''}</td>
+                      <td><span className="check">{q(9) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(9) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(9) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(9) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(9) === 4 ? '✓' : ''}</span></td><td>{safeRemarks[8] || ""}</td>
                   </tr>
 
                   <tr>
                       <td rowSpan={5} className="bg-light-blue">"3S" SHINE<br/>"SEISO"</td>
                       <td className="text-left bg-yellow">Is Working Area and nearby location cleaned properly and free from dust,waste, water, oil, chips and coolant overflow ?</td>
                       <td className="text-left">Physical Verification</td>
-                      <td><span className="check">{q(10) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(10) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(10) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(10) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(10) === 4 ? '✓' : ''}</span></td><td>{audit.remarks && audit.remarks[9] ? audit.remarks[9] : ''}</td>
+                      <td><span className="check">{q(10) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(10) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(10) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(10) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(10) === 4 ? '✓' : ''}</span></td><td>{safeRemarks[9] || ""}</td>
                   </tr>
                   <tr>
                       <td className="text-left">Are the machine/Equipement/Tables/floors/Taps cleans at regular defined frequency ?</td>
                       <td className="text-left">Clit/ JH/ Sampling</td>
-                      <td><span className="check">{q(11) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(11) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(11) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(11) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(11) === 4 ? '✓' : ''}</span></td><td>{audit.remarks && audit.remarks[10] ? audit.remarks[10] : ''}</td>
+                      <td><span className="check">{q(11) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(11) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(11) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(11) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(11) === 4 ? '✓' : ''}</span></td><td>{safeRemarks[10] || ""}</td>
                   </tr>
                   <tr>
                       <td className="text-left">Floors, walls, ceilings, Racks and pipework are in good condition and free from dirt and dust</td>
                       <td className="text-left">Physical Verification</td>
-                      <td><span className="check">{q(12) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(12) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(12) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(12) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(12) === 4 ? '✓' : ''}</span></td><td>{audit.remarks && audit.remarks[11] ? audit.remarks[11] : ''}</td>
+                      <td><span className="check">{q(12) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(12) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(12) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(12) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(12) === 4 ? '✓' : ''}</span></td><td>{safeRemarks[11] || ""}</td>
                   </tr>
                   <tr>
                       <td className="text-left">Machines, equipment, tools and Stored items, materials and products are kept clean.</td>
                       <td className="text-left">Physical Verification</td>
-                      <td><span className="check">{q(13) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(13) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(13) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(13) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(13) === 4 ? '✓' : ''}</span></td><td>{audit.remarks && audit.remarks[12] ? audit.remarks[12] : ''}</td>
+                      <td><span className="check">{q(13) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(13) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(13) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(13) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(13) === 4 ? '✓' : ''}</span></td><td>{safeRemarks[12] || ""}</td>
                   </tr>
                   <tr>
                       <td className="text-left bg-yellow">Lighting/Lux Level is enough (as required) and all lighting is free from dust</td>
                       <td className="text-left bg-yellow">Lux Level with Monitoring sheet</td>
-                      <td><span className="check">{q(14) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(14) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(14) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(14) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(14) === 4 ? '✓' : ''}</span></td><td>{audit.remarks && audit.remarks[13] ? audit.remarks[13] : ''}</td>
+                      <td><span className="check">{q(14) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(14) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(14) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(14) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(14) === 4 ? '✓' : ''}</span></td><td>{safeRemarks[13] || ""}</td>
                   </tr>
 
                   <tr>
                       <td rowSpan={4} className="bg-light-blue">"4S"<br/>STANDARDIZATION<br/>"SEIKETSU"</td>
                       <td className="text-left">Are 6S Audit Previous Observations closed and actions initiated/implemented?</td>
                       <td className="text-left">WI/ Visual Control</td>
-                      <td><span className="check">{q(15) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(15) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(15) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(15) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(15) === 4 ? '✓' : ''}</span></td><td>{audit.remarks && audit.remarks[14] ? audit.remarks[14] : ''}</td>
+                      <td><span className="check">{q(15) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(15) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(15) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(15) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(15) === 4 ? '✓' : ''}</span></td><td>{safeRemarks[14] || ""}</td>
                   </tr>
                   <tr>
                       <td className="text-left">Independency followed in Audit and results are declared and Communicated to entire team.</td>
                       <td className="text-left">Audit schedule & Result display</td>
-                      <td><span className="check">{q(16) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(16) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(16) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(16) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(16) === 4 ? '✓' : ''}</span></td><td>{audit.remarks && audit.remarks[15] ? audit.remarks[15] : ''}</td>
+                      <td><span className="check">{q(16) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(16) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(16) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(16) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(16) === 4 ? '✓' : ''}</span></td><td>{safeRemarks[15] || ""}</td>
                   </tr>
                   <tr>
                       <td className="text-left">Work Zone is properly marked and indicates walkways, storage and other area clearly.</td>
                       <td className="text-left">Area Marking as per 5S Layout Plan</td>
-                      <td><span className="check">{q(17) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(17) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(17) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(17) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(17) === 4 ? '✓' : ''}</span></td><td>{audit.remarks && audit.remarks[16] ? audit.remarks[16] : ''}</td>
+                      <td><span className="check">{q(17) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(17) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(17) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(17) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(17) === 4 ? '✓' : ''}</span></td><td>{safeRemarks[16] || ""}</td>
                   </tr>
                   <tr>
                       <td className="text-left">Are Initiatives taken for continual improvement of all 3S and First 3S being maintained ?</td>
                       <td className="text-left">improvement Details</td>
-                      <td><span className="check">{q(18) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(18) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(18) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(18) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(18) === 4 ? '✓' : ''}</span></td><td>{audit.remarks && audit.remarks[17] ? audit.remarks[17] : ''}</td>
+                      <td><span className="check">{q(18) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(18) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(18) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(18) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(18) === 4 ? '✓' : ''}</span></td><td>{safeRemarks[17] || ""}</td>
                   </tr>
 
                   <tr>
                       <td rowSpan={4} className="bg-light-blue">"5S"<br/>SUSTAINENANCE<br/>"SHITSUKE"</td>
                       <td className="text-left">Effectiveness verification system exist/ Regular audits are conducted to ensure 6S compliance?</td>
                       <td className="text-left">5S Audit and Action plan</td>
-                      <td><span className="check">{q(19) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(19) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(19) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(19) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(19) === 4 ? '✓' : ''}</span></td><td>{audit.remarks && audit.remarks[18] ? audit.remarks[18] : ''}</td>
+                      <td><span className="check">{q(19) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(19) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(19) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(19) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(19) === 4 ? '✓' : ''}</span></td><td>{safeRemarks[18] || ""}</td>
                   </tr>
                   <tr>
                       <td className="text-left">Does Leaders enforce Training and awareness for to encourage 5S and Safety at shop floor.</td>
                       <td className="text-left">Training and awareness</td>
-                      <td><span className="check">{q(20) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(20) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(20) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(20) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(20) === 4 ? '✓' : ''}</span></td><td>{audit.remarks && audit.remarks[19] ? audit.remarks[19] : ''}</td>
+                      <td><span className="check">{q(20) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(20) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(20) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(20) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(20) === 4 ? '✓' : ''}</span></td><td>{safeRemarks[19] || ""}</td>
                   </tr>
                   <tr>
                       <td className="text-left">Is actions implemented for the previous observations are effective ?</td>
                       <td className="text-left">Previous Action plan Effectiveness</td>
-                      <td><span className="check">{q(21) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(21) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(21) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(21) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(21) === 4 ? '✓' : ''}</span></td><td>{audit.remarks && audit.remarks[20] ? audit.remarks[20] : ''}</td>
+                      <td><span className="check">{q(21) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(21) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(21) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(21) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(21) === 4 ? '✓' : ''}</span></td><td>{safeRemarks[20] || ""}</td>
                   </tr>
                   <tr>
                       <td className="text-left">Management Support to 6S Programme by providing resources, rewards and recognition</td>
                       <td className="text-left">Monthly Recognition</td>
-                      <td><span className="check">{q(22) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(22) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(22) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(22) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(22) === 4 ? '✓' : ''}</span></td><td>{audit.remarks && audit.remarks[21] ? audit.remarks[21] : ''}</td>
+                      <td><span className="check">{q(22) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(22) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(22) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(22) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(22) === 4 ? '✓' : ''}</span></td><td>{safeRemarks[21] || ""}</td>
                   </tr>
 
                   <tr>
                       <td rowSpan={3} className="bg-light-blue">"6S" SAFETY<br/>AT WORK<br/>STATION</td>
                       <td className="text-left">Are Workmen wear Proper PPEs and Required PPE matrix available & displayed at appropriate area.</td>
                       <td className="text-left">Skill Matrix/Verbal communication</td>
-                      <td><span className="check">{q(23) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(23) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(23) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(23) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(23) === 4 ? '✓' : ''}</span></td><td>{audit.remarks && audit.remarks[22] ? audit.remarks[22] : ''}</td>
+                      <td><span className="check">{q(23) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(23) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(23) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(23) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(23) === 4 ? '✓' : ''}</span></td><td>{safeRemarks[22] || ""}</td>
                   </tr>
                   <tr>
                       <td className="text-left">Safety equipment are in ready to use condition and available in required quantity.(PPEs/Emergency Exit/Evacuation Plan)</td>
                       <td className="text-left">Safety Equipement condition</td>
-                      <td><span className="check">{q(24) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(24) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(24) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(24) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(24) === 4 ? '✓' : ''}</span></td><td>{audit.remarks && audit.remarks[23] ? audit.remarks[23] : ''}</td>
+                      <td><span className="check">{q(24) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(24) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(24) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(24) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(24) === 4 ? '✓' : ''}</span></td><td>{safeRemarks[23] || ""}</td>
                   </tr>
                   <tr>
                       <td className="text-left">Any material/Unsafe act/condition at shop floor which can cause safety incident to workman (Ensure controls)</td>
                       <td className="text-left">Identify Safety Hazard</td>
-                      <td><span className="check">{q(25) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(25) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(25) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(25) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(25) === 4 ? '✓' : ''}</span></td><td>{audit.remarks && audit.remarks[24] ? audit.remarks[24] : ''}</td>
+                      <td><span className="check">{q(25) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(25) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(25) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(25) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(25) === 4 ? '✓' : ''}</span></td><td>{safeRemarks[24] || ""}</td>
                   </tr>
 
                   <tr>
