@@ -136,19 +136,19 @@ export default function AuditFormClient({ auditorName }: { auditorName: string }
       <div className="grid grid-cols-1 sm:grid-cols-2 text-sm border border-black mb-4">
         <div className="border border-black p-2 font-bold flex gap-2">
           <span className="whitespace-nowrap">WORK ZONE:</span> 
-          <input required type="text" value={workZone} onChange={e => setWorkZone(e.target.value)} className="font-normal w-full outline-none bg-slate-50 focus:bg-white" />
+          <input required type="text" value={workZone} onChange={e => setWorkZone(e.target.value)} className="text-black font-bold w-full outline-none bg-slate-100 focus:bg-white px-1" />
         </div>
         <div className="border border-black p-2 font-bold flex gap-2">
           <span className="whitespace-nowrap">AUDIT DATE:</span> 
-          <input required type="date" value={auditDate} onChange={e => setAuditDate(e.target.value)} className="font-normal w-full outline-none bg-slate-50 focus:bg-white" />
+          <input required type="date" value={auditDate} onChange={e => setAuditDate(e.target.value)} className="text-black font-bold w-full outline-none bg-slate-100 focus:bg-white px-1" />
         </div>
         <div className="border border-black p-2 font-bold flex gap-2">
           <span className="whitespace-nowrap">ZONE LEADER:</span> 
-          <input required type="text" value={zoneLeader} onChange={e => setZoneLeader(e.target.value)} className="font-normal w-full outline-none bg-slate-50 focus:bg-white" />
+          <input required type="text" value={zoneLeader} onChange={e => setZoneLeader(e.target.value)} className="text-black font-bold w-full outline-none bg-slate-100 focus:bg-white px-1" />
         </div>
         <div className="border border-black p-2 font-bold flex gap-2">
           <span className="whitespace-nowrap">AUDITOR:</span> 
-          <span className="font-normal w-full">{auditorName}</span>
+          <span className="text-black font-bold w-full bg-slate-100 px-1">{auditorName}</span>
         </div>
       </div>
 
@@ -198,7 +198,7 @@ export default function AuditFormClient({ auditorName }: { auditorName: string }
                       </td>
                     ))}
                     <td className="border border-black p-1">
-                      <input type="text" className="w-full text-xs outline-none bg-transparent" />
+                      <input type="text" className="w-full text-xs text-black font-bold outline-none bg-slate-100 focus:bg-white px-1" />
                     </td>
                   </tr>
                 );
@@ -237,13 +237,13 @@ export default function AuditFormClient({ auditorName }: { auditorName: string }
           <tbody>
             {actionPlan.map((ap, idx) => (
               <tr key={idx}>
-                <td className="border border-black p-1"><input value={ap.slNo} onChange={e => handleActionPlanChange(idx, 'slNo', e.target.value)} className="w-full text-xs outline-none bg-slate-50 focus:bg-white text-center" /></td>
-                <td className="border border-black p-1"><input value={ap.nonConformance} onChange={e => handleActionPlanChange(idx, 'nonConformance', e.target.value)} className="w-full text-xs outline-none bg-slate-50 focus:bg-white" /></td>
-                <td className="border border-black p-1"><input value={ap.correction} onChange={e => handleActionPlanChange(idx, 'correction', e.target.value)} className="w-full text-xs outline-none bg-slate-50 focus:bg-white" /></td>
-                <td className="border border-black p-1"><input value={ap.correctiveAction} onChange={e => handleActionPlanChange(idx, 'correctiveAction', e.target.value)} className="w-full text-xs outline-none bg-slate-50 focus:bg-white" /></td>
-                <td className="border border-black p-1"><input type="date" value={ap.targetDate} onChange={e => handleActionPlanChange(idx, 'targetDate', e.target.value)} className="w-full text-xs outline-none bg-slate-50 focus:bg-white" /></td>
-                <td className="border border-black p-1"><input value={ap.responsibility} onChange={e => handleActionPlanChange(idx, 'responsibility', e.target.value)} className="w-full text-xs outline-none bg-slate-50 focus:bg-white" /></td>
-                <td className="border border-black p-1"><input value={ap.status} onChange={e => handleActionPlanChange(idx, 'status', e.target.value)} className="w-full text-xs outline-none bg-slate-50 focus:bg-white" /></td>
+                <td className="border border-black p-1"><input value={ap.slNo} onChange={e => handleActionPlanChange(idx, 'slNo', e.target.value)} className="w-full text-xs text-black font-bold outline-none bg-slate-100 focus:bg-white text-center px-1" /></td>
+                <td className="border border-black p-1"><input value={ap.nonConformance} onChange={e => handleActionPlanChange(idx, 'nonConformance', e.target.value)} className="w-full text-xs text-black font-bold outline-none bg-slate-100 focus:bg-white px-1" /></td>
+                <td className="border border-black p-1"><input value={ap.correction} onChange={e => handleActionPlanChange(idx, 'correction', e.target.value)} className="w-full text-xs text-black font-bold outline-none bg-slate-100 focus:bg-white px-1" /></td>
+                <td className="border border-black p-1"><input value={ap.correctiveAction} onChange={e => handleActionPlanChange(idx, 'correctiveAction', e.target.value)} className="w-full text-xs text-black font-bold outline-none bg-slate-100 focus:bg-white px-1" /></td>
+                <td className="border border-black p-1"><input type="date" value={ap.targetDate} onChange={e => handleActionPlanChange(idx, 'targetDate', e.target.value)} className="w-full text-xs text-black font-bold outline-none bg-slate-100 focus:bg-white px-1" /></td>
+                <td className="border border-black p-1"><input value={ap.responsibility} onChange={e => handleActionPlanChange(idx, 'responsibility', e.target.value)} className="w-full text-xs text-black font-bold outline-none bg-slate-100 focus:bg-white px-1" /></td>
+                <td className="border border-black p-1"><input value={ap.status} onChange={e => handleActionPlanChange(idx, 'status', e.target.value)} className="w-full text-xs text-black font-bold outline-none bg-slate-100 focus:bg-white px-1" /></td>
               </tr>
             ))}
           </tbody>

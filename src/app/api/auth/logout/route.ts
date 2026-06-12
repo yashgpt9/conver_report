@@ -7,8 +7,8 @@ export async function POST() {
   return NextResponse.json({ success: true });
 }
 
-export async function GET() {
+export async function GET(request: Request) {
   const cookieStore = await cookies();
   cookieStore.delete('session');
-  return NextResponse.redirect(new URL('/login', process.env.NEXTAUTH_URL || 'http://localhost:3000'));
+  return NextResponse.redirect(new URL('/login', request.url));
 }
