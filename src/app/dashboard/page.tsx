@@ -21,14 +21,13 @@ export default async function DashboardPage() {
       <nav className="bg-slate-900 text-white shadow-md sticky top-0 z-50">
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
           <div className="flex justify-between h-16">
-            <div className="flex items-center gap-2">
+            <Link href="/" className="flex items-center gap-2 hover:opacity-80 transition-opacity">
               <div className="w-8 h-8 bg-blue-600 rounded flex items-center justify-center font-bold text-lg">
                 S
               </div>
-              <span className="font-bold text-xl tracking-tight">Supervisor Dashboard</span>
-            </div>
+              <span className="font-bold text-xl tracking-tight">Dashboard</span>
+            </Link>
             <div className="flex items-center gap-4 text-sm font-medium">
-              <span className="text-slate-400">Welcome, {userName}</span>
               <SignOutButton />
             </div>
           </div>

@@ -64,7 +64,7 @@ export default function AuditFormClient({ auditorName }: { auditorName: string }
   const [workZone, setWorkZone] = useState('');
   const [auditDate, setAuditDate] = useState(new Date().toISOString().split('T')[0]);
   const [zoneLeader, setZoneLeader] = useState('');
-  const [auditor, setAuditor] = useState(auditorName);
+  const [auditor, setAuditor] = useState('');
   
   const [scores, setScores] = useState<number[]>(Array(25).fill(0));
   const [remarks, setRemarks] = useState<string[]>(Array(25).fill(''));
