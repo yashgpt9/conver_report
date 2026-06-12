@@ -4,20 +4,33 @@ import { getSession } from '@/lib/auth';
 
 export const dynamic = 'force-dynamic';
 
-export async function GET() {
+export async function GET(req: Request) {
   try {
     const session = await getSession();
     if (!session) {
       return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
     }
 
-    // Get all completed zones for the current month based on createdAt
-    const result = await sql`
-      SELECT "workZone" 
-      FROM "Audit" 
-      WHERE EXTRACT(MONTH FROM "createdAt") = EXTRACT(MONTH FROM CURRENT_DATE)
-      AND EXTRACT(YEAR FROM "createdAt") = EXTRACT(YEAR FROM CURRENT_DATE)
-    `;
+    const { searchParams } = new URL(req.url);
+    const month = searchParams.get('month'); // Expects "YYYY-MM"
+    
+    let result;
+    if (month) {
+      // Find audits where auditDate string starts with the provided YYYY-MM
+      result = await sql`
+        SELECT "workZone" 
+        FROM "Audit" 
+        WHERE "auditDate" LIKE ${month + '%'}
+      `;
+    } else {
+      // Fallback to current month if no month param is provided
+      const currentMonthStr = new Date().toISOString().substring(0, 7);
+      result = await sql`
+        SELECT "workZone" 
+        FROM "Audit" 
+        WHERE "auditDate" LIKE ${currentMonthStr + '%'}
+      `;
+    }
 
     const completedZones = result.map(row => row.workZone);
     return NextResponse.json({ completedZones });

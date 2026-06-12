@@ -25,12 +25,12 @@ export async function POST(req: Request) {
 
     const data = await req.json();
 
-    // Check if zone already has an audit this month
+    // Check if zone already has an audit this month based on the submitted auditDate
+    const submittedMonth = data.auditDate.substring(0, 7); // YYYY-MM
     const existing = await sql`
       SELECT id FROM "Audit"
       WHERE "workZone" = ${data.workZone}
-      AND EXTRACT(MONTH FROM "createdAt") = EXTRACT(MONTH FROM CURRENT_DATE)
-      AND EXTRACT(YEAR FROM "createdAt") = EXTRACT(YEAR FROM CURRENT_DATE)
+      AND "auditDate" LIKE ${submittedMonth + '%'}
       LIMIT 1
     `;
 

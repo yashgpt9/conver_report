@@ -51,10 +51,15 @@ export default async function DashboardPage() {
         {/* Compliance Tracker */}
         <div className="bg-white rounded-xl shadow-sm border border-slate-200 overflow-hidden">
           <div className="p-6 border-b border-slate-200 bg-slate-50 flex justify-between items-center">
-            <h2 className="text-xl font-bold text-slate-800">Monthly Zone Compliance</h2>
-            <span className="text-sm font-bold text-slate-500 bg-slate-200 px-3 py-1 rounded-full">
-              {new Date().toLocaleString('default', { month: 'long', year: 'numeric' })}
-            </span>
+            <div className="flex items-center gap-4">
+              <h2 className="text-xl font-bold text-slate-800">Monthly Zone Compliance</h2>
+              <span className="text-sm font-bold text-slate-500 bg-slate-200 px-3 py-1 rounded-full">
+                {new Date().toLocaleString('default', { month: 'long', year: 'numeric' })}
+              </span>
+            </div>
+            <Link href="/dashboard/report" className="bg-blue-600 text-white px-4 py-2 rounded-lg font-bold shadow-sm hover:bg-blue-700 transition-colors">
+              View Plant Report &rarr;
+            </Link>
           </div>
           <div className="p-6">
             <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5 gap-4">

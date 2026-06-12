@@ -81,14 +81,15 @@ export default function AuditFormClient({ auditorName }: { auditorName: string }
   const submittingRef = useRef(false);
 
   useEffect(() => {
-    // Fetch zones that have already submitted an audit this month
-    fetch('/api/audits/completed-zones')
+    // Fetch zones that have already submitted an audit for the selected month
+    const month = auditDate.substring(0, 7); // e.g., "2026-06"
+    fetch(`/api/audits/completed-zones?month=${month}`)
       .then(res => res.json())
       .then(data => {
         if (data.completedZones) setCompletedZones(data.completedZones);
       })
       .catch(err => console.error("Failed to load completed zones", err));
-  }, []);
+  }, [auditDate]);
 
   const calculateTotalScore = () => scores.reduce((a, b) => a + b, 0);
   const totalScore = calculateTotalScore();
@@ -172,7 +173,7 @@ export default function AuditFormClient({ auditorName }: { auditorName: string }
         </div>
         <div className="border border-black p-2 font-bold flex gap-2">
           <span className="whitespace-nowrap">AUDIT DATE:</span> 
-          <input required type="date" value={auditDate} readOnly className="text-black font-bold w-full outline-none bg-slate-100 cursor-not-allowed px-1" />
+          <input required type="date" value={auditDate} onChange={e => setAuditDate(e.target.value)} className="text-black font-bold w-full outline-none bg-slate-100 focus:bg-white px-1 cursor-pointer" />
         </div>
         <div className="border border-black p-2 font-bold flex gap-2">
           <span className="whitespace-nowrap">ZONE LEADER:</span> 
