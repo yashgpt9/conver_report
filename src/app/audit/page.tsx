@@ -29,7 +29,7 @@ export default async function AuditPage() {
       {/* Main Content */}
       <main className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-8">
         <div className="mb-8">
-          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">5S Audit Form</h1>
+          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight">6S Audit Form</h1>
           <p className="mt-2 text-slate-600">Complete the assessment and submit your findings.</p>
         </div>
         <AuditFormClient auditorName={userName} />
