@@ -6,7 +6,7 @@ import { useRouter } from 'next/navigation';
 
 export default function ReviewClient({ audit }: { audit: any }) {
   const router = useRouter();
-  const printRef = useRef(null);
+  const printRef = useRef<HTMLDivElement>(null);
   
   const [comment1, setComment1] = useState(audit.reviewComment1 || '');
   const [comment2, setComment2] = useState(audit.reviewComment2 || '');
@@ -56,6 +56,41 @@ export default function ReviewClient({ audit }: { audit: any }) {
     }
   };
 
+  const q = (idx: number) => {
+    return audit[`q${idx}`] as number;
+  };
+
+  // We inject the user's exact CSS into a <style> tag so it perfectly styles the printed document
+  const cssStyles = `
+    * { box-sizing: border-box; }
+    @page { size: A4 portrait; margin: 12mm 15mm; }
+    .print-doc { font-family: Arial, sans-serif; font-size: 8px; color: #040303; margin: 0; padding: 0; }
+    .print-doc table { width: 100%; border-collapse: collapse; margin-bottom: 8px; table-layout: fixed; }
+    .print-doc .keep-together { page-break-inside: avoid; }
+    .print-doc th, .print-doc td { border: 1px solid #000; padding: 3px 2px; text-align: center; vertical-align: middle; word-wrap: break-word; overflow-wrap: break-word; }
+    .print-doc tr { page-break-inside: avoid; }
+    
+    .print-doc .col-phase { width: 8%; }
+    .print-doc .col-desc  { width: 34%; text-align: left; }
+    .print-doc .col-evid  { width: 16%; text-align: left; }
+    .print-doc .col-score { width: 6.2%; }
+    .print-doc .col-remark{ width: 11%; }  
+    
+    .print-doc .bg-yellow { background-color: #ffc000; font-weight: bold; }
+    .print-doc .bg-blue { background-color: #8eaadb; font-weight: bold; }
+    .print-doc .bg-light-blue { background-color: #b4c6e7; font-weight: bold; }
+    .print-doc .bg-red { background-color: #e6b8b7; font-weight: bold; }
+    .print-doc .bg-grey { background-color: #d9d9d9; font-weight: bold; }
+    .print-doc .text-left { text-align: left; }
+    
+    .print-doc .header-title { font-size: 15px; font-weight: bold; padding: 8px; }
+    .print-doc .logo-text { color: #0070c0; font-size: 13px; font-weight: bold; text-align: right; border: none; }
+    .print-doc .logo-sub { color: #7f7f7f; font-size: 9px; font-style: italic; }
+    .print-doc .check { font-size: 11px; font-weight: bold; color: #000; }
+    .print-doc .bold { font-weight: bold; }
+    .print-doc .no-border-table td { border: 1px solid #000; text-align: left; padding: 4px; font-size: 10px; font-weight: bold; }
+  `;
+
   return (
     <div className="space-y-6">
       {/* Action Bar (Hidden when printing) */}
@@ -74,110 +109,324 @@ export default function ReviewClient({ audit }: { audit: any }) {
         </div>
       </div>
 
-      {/* The Printable Area */}
-      <div ref={printRef} className="bg-white p-10 rounded-xl shadow-sm border border-slate-200 print:border-none print:shadow-none print:p-0 print:w-full">
-        
-        {/* Header */}
-        <div className="text-center border-b-2 border-slate-800 pb-6 mb-8">
-          <h1 className="text-3xl font-extrabold text-slate-900 tracking-tight uppercase">5S Audit Report</h1>
-          <p className="text-slate-500 mt-2 font-medium">Generated on {new Date().toLocaleDateString()}</p>
-        </div>
-
-        {/* Info Grid */}
-        <div className="grid grid-cols-2 gap-x-8 gap-y-4 mb-8 text-sm">
-          <div className="bg-slate-50 p-3 rounded-lg border border-slate-100"><strong className="text-slate-500 block mb-1">Work Zone</strong><span className="font-bold text-lg">{audit.workZone}</span></div>
-          <div className="bg-slate-50 p-3 rounded-lg border border-slate-100"><strong className="text-slate-500 block mb-1">Audit Date</strong><span className="font-bold text-lg">{audit.auditDate}</span></div>
-          <div className="bg-slate-50 p-3 rounded-lg border border-slate-100"><strong className="text-slate-500 block mb-1">Zone Leader</strong><span className="font-bold text-lg">{audit.zoneLeader}</span></div>
-          <div className="bg-slate-50 p-3 rounded-lg border border-slate-100"><strong className="text-slate-500 block mb-1">Auditor Name</strong><span className="font-bold text-lg">{audit.auditorName}</span></div>
-          <div className="bg-slate-50 p-3 rounded-lg border border-slate-100"><strong className="text-slate-500 block mb-1">Status</strong><span className="font-bold text-lg text-blue-700">{audit.status}</span></div>
-          <div className="bg-blue-50 p-3 rounded-lg border border-blue-200"><strong className="text-blue-600 block mb-1">Total Score</strong><span className="font-extrabold text-2xl text-blue-800">{audit.totalScore} / 125</span></div>
-        </div>
-
-        {/* Action Plan */}
-        <div className="mb-8 print:break-inside-avoid">
-          <h3 className="text-lg font-bold text-slate-800 border-b pb-2 mb-4">Action Plan</h3>
-          {audit.actionPlanItems && audit.actionPlanItems.length > 0 ? (
-            <table className="min-w-full divide-y divide-slate-200 border text-sm">
-              <thead className="bg-slate-100">
-                <tr>
-                  <th className="px-3 py-2 text-left font-bold text-slate-700">Sl.No</th>
-                  <th className="px-3 py-2 text-left font-bold text-slate-700">Non-Conformance</th>
-                  <th className="px-3 py-2 text-left font-bold text-slate-700">Correction</th>
-                  <th className="px-3 py-2 text-left font-bold text-slate-700">Corrective Action</th>
-                  <th className="px-3 py-2 text-left font-bold text-slate-700">Target Date</th>
-                  <th className="px-3 py-2 text-left font-bold text-slate-700">Responsibility</th>
-                  <th className="px-3 py-2 text-left font-bold text-slate-700">Status</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-slate-200">
-                {audit.actionPlanItems.map((ap: any) => (
-                  <tr key={ap.id}>
-                    <td className="px-3 py-2">{ap.slNo}</td>
-                    <td className="px-3 py-2">{ap.nonConformance}</td>
-                    <td className="px-3 py-2">{ap.correction}</td>
-                    <td className="px-3 py-2">{ap.correctiveAction}</td>
-                    <td className="px-3 py-2">{ap.targetDate}</td>
-                    <td className="px-3 py-2">{ap.responsibility}</td>
-                    <td className="px-3 py-2 font-bold">{ap.status}</td>
-                  </tr>
-                ))}
+      <div className="bg-white p-4 rounded shadow print:p-0 print:shadow-none overflow-x-auto">
+        <div ref={printRef} className="print-doc w-full min-w-[800px] print:min-w-0 bg-white">
+          <style dangerouslySetInnerHTML={{ __html: cssStyles }} />
+          
+          <table style={{ border: 'none', marginBottom: '0' }}>
+              <tbody>
+              <tr>
+                  <td style={{ border: 'none', textAlign: 'center', width: '80%' }} className="header-title">MONTHLY 6S AUDIT CHECKSHEET</td>
+                  <td style={{ border: 'none', textAlign: 'right', width: '20%' }}>
+                      <span className="logo-text">SANSERA</span><br/>
+                      <span className="logo-sub">ideas@work</span>
+                  </td>
+              </tr>
               </tbody>
-            </table>
-          ) : (
-            <p className="text-slate-500 italic">No action plan items recorded.</p>
-          )}
-        </div>
+          </table>
 
-        {/* Supervisor Comments */}
-        <div className="print:break-inside-avoid">
-          <h3 className="text-lg font-bold text-slate-800 border-b pb-2 mb-4">Supervisor Review Comments</h3>
-          <div className="space-y-4">
-            <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
-              <label className="block text-sm font-bold text-slate-700 mb-2">1. Good points / Best practices observed</label>
-              <textarea 
-                className="w-full bg-white border border-slate-300 rounded p-3 text-sm focus:ring-2 focus:ring-blue-500 print:border-none print:bg-transparent print:p-0 print:resize-none" 
-                rows={3} 
-                value={comment1} 
-                onChange={e => setComment1(e.target.value)}
-                placeholder="Enter comments here..."
-              />
-            </div>
-            <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
-              <label className="block text-sm font-bold text-slate-700 mb-2">2. Areas for improvement</label>
-              <textarea 
-                className="w-full bg-white border border-slate-300 rounded p-3 text-sm focus:ring-2 focus:ring-blue-500 print:border-none print:bg-transparent print:p-0 print:resize-none" 
-                rows={3} 
-                value={comment2} 
-                onChange={e => setComment2(e.target.value)}
-                placeholder="Enter comments here..."
-              />
-            </div>
-            <div className="bg-slate-50 p-4 rounded-lg border border-slate-200">
-              <label className="block text-sm font-bold text-slate-700 mb-2">3. General feedback</label>
-              <textarea 
-                className="w-full bg-white border border-slate-300 rounded p-3 text-sm focus:ring-2 focus:ring-blue-500 print:border-none print:bg-transparent print:p-0 print:resize-none" 
-                rows={3} 
-                value={comment3} 
-                onChange={e => setComment3(e.target.value)}
-                placeholder="Enter comments here..."
-              />
-            </div>
-          </div>
-        </div>
+          <table className="no-border-table">
+              <tbody>
+              <tr>
+                  <td style={{ width: '50%' }}>WORK ZONE: <span style={{ fontWeight: 'normal' }}>{audit.workZone}</span></td>
+                  <td style={{ width: '50%' }}>AUDIT DATE: <span style={{ fontWeight: 'normal' }}>{audit.auditDate}</span></td>
+              </tr>
+              <tr>
+                  <td>ZONE LEADER: <span style={{ fontWeight: 'normal' }}>{audit.zoneLeader}</span></td>
+                  <td>AUDITOR: <span style={{ fontWeight: 'normal' }}>{audit.auditorName}</span></td>
+              </tr>
+              </tbody>
+          </table>
 
-        {/* Signatures for Print */}
-        <div className="hidden print:flex justify-between mt-16 pt-8 border-t border-slate-300">
-          <div className="text-center w-64">
-            <div className="border-b-2 border-slate-800 mb-2 pb-8"></div>
-            <p className="font-bold">Auditor Signature</p>
-            <p className="text-sm text-slate-500">{audit.auditorName}</p>
-          </div>
-          <div className="text-center w-64">
-            <div className="border-b-2 border-slate-800 mb-2 pb-8"></div>
-            <p className="font-bold">Supervisor Signature</p>
-          </div>
-        </div>
+          <table>
+              <thead>
+                  <tr>
+                      <td className="bg-yellow col-phase" rowSpan={2}>PHASE</td>
+                      <td className="bg-yellow col-desc" rowSpan={2}>CHECK ITEM DESCRIPTION</td>
+                      <td className="bg-yellow col-evid" rowSpan={2}>OBJECTIVE EVIDENCE</td>
+                      <td className="bg-blue col-score">0</td>
+                      <td className="bg-blue col-score">1</td>
+                      <td className="bg-blue col-score">2</td>
+                      <td className="bg-blue col-score">3</td>
+                      <td className="bg-blue col-score">4</td>
+                      <td className="bg-blue col-remark" rowSpan={2}>Remark</td>
+                  </tr>
+                  <tr>
+                      <td className="bg-yellow">Very Bad</td>
+                      <td className="bg-yellow">Bad</td>
+                      <td className="bg-yellow">AVERAGE</td>
+                      <td className="bg-yellow">GOOD</td>
+                      <td className="bg-yellow">EXCELLENT</td>
+                  </tr>
+              </thead>
+              <tbody>
+                  <tr>
+                      <td rowSpan={5} className="bg-light-blue">"1S"-SHORTING<br/>"SEIRI"</td>
+                      <td className="text-left">Awareness of Concerned person about sorting phase</td>
+                      <td className="text-left">Skill Matrix/Verbal communication</td>
+                      <td><span className="check">{q(1) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(1) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(1) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(1) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(1) === 4 ? '✓' : ''}</span></td><td></td>
+                  </tr>
+                  <tr>
+                      <td className="text-left">Only Required Material present in area.Obsolete & Unnaccessory material/ Equipement removed or red tagged.</td>
+                      <td className="text-left">List of Items/ Red Tag Activity</td>
+                      <td><span className="check">{q(2) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(2) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(2) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(2) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(2) === 4 ? '✓' : ''}</span></td><td></td>
+                  </tr>
+                  <tr>
+                      <td className="text-left">Involvement of Supervisors and Department heads in Sorting activity</td>
+                      <td className="text-left">Daily Checksheet Review</td>
+                      <td><span className="check">{q(3) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(3) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(3) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(3) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(3) === 4 ? '✓' : ''}</span></td><td></td>
+                  </tr>
+                  <tr>
+                      <td className="text-left">Storage area is defined to store broken, unusable or occasionally used items.</td>
+                      <td className="text-left">5S Layout Plan</td>
+                      <td><span className="check">{q(4) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(4) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(4) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(4) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(4) === 4 ? '✓' : ''}</span></td><td></td>
+                  </tr>
+                  <tr>
+                      <td className="text-left">Only Job-related documents stored in the work zone and other waste disposition is proper</td>
+                      <td className="text-left">Doc. File/Disposal Bins/Scrap Note</td>
+                      <td><span className="check">{q(5) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(5) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(5) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(5) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(5) === 4 ? '✓' : ''}</span></td><td></td>
+                  </tr>
 
+                  <tr>
+                      <td rowSpan={4} className="bg-light-blue">"2S"SET IN ORDER<br/>"SEITON"</td>
+                      <td className="text-left">Awareness of Concerned person about Set in Order phase</td>
+                      <td className="text-left">Skill Matrix/Verbal communication</td>
+                      <td><span className="check">{q(6) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(6) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(6) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(6) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(6) === 4 ? '✓' : ''}</span></td><td></td>
+                  </tr>
+                  <tr>
+                      <td className="text-left">Equipement/Machinery is clearly identified (Number/Name/Color Code) & Placed at Proeperly defined location</td>
+                      <td className="text-left">Equipement/ Item Identification</td>
+                      <td><span className="check">{q(7) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(7) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(7) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(7) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(7) === 4 ? '✓' : ''}</span></td><td></td>
+                  </tr>
+                  <tr>
+                      <td className="text-left">Is Material Placed as per defined layout plan and Everything put back to its defined place?</td>
+                      <td className="text-left">5S Layout Plan/Ergonomic Chart</td>
+                      <td><span className="check">{q(8) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(8) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(8) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(8) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(8) === 4 ? '✓' : ''}</span></td><td></td>
+                  </tr>
+                  <tr>
+                      <td className="text-left">Are Cupboards/Walkways clear, Unblocked and area well organized</td>
+                      <td className="text-left">Physical Verification</td>
+                      <td><span className="check">{q(9) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(9) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(9) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(9) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(9) === 4 ? '✓' : ''}</span></td><td></td>
+                  </tr>
+
+                  <tr>
+                      <td rowSpan={5} className="bg-light-blue">"3S" SHINE<br/>"SEISO"</td>
+                      <td className="text-left bg-yellow">Is Working Area and nearby location cleaned properly and free from dust,waste, water, oil, chips and coolant overflow ?</td>
+                      <td className="text-left">Physical Verification</td>
+                      <td><span className="check">{q(10) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(10) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(10) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(10) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(10) === 4 ? '✓' : ''}</span></td><td></td>
+                  </tr>
+                  <tr>
+                      <td className="text-left">Are the machine/Equipement/Tables/floors/Taps cleans at regular defined frequency ?</td>
+                      <td className="text-left">Clit/ JH/ Sampling</td>
+                      <td><span className="check">{q(11) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(11) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(11) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(11) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(11) === 4 ? '✓' : ''}</span></td><td></td>
+                  </tr>
+                  <tr>
+                      <td className="text-left">Floors, walls, ceilings, Racks and pipework are in good condition and free from dirt and dust</td>
+                      <td className="text-left">Physical Verification</td>
+                      <td><span className="check">{q(12) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(12) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(12) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(12) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(12) === 4 ? '✓' : ''}</span></td><td></td>
+                  </tr>
+                  <tr>
+                      <td className="text-left">Machines, equipment, tools and Stored items, materials and products are kept clean.</td>
+                      <td className="text-left">Physical Verification</td>
+                      <td><span className="check">{q(13) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(13) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(13) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(13) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(13) === 4 ? '✓' : ''}</span></td><td></td>
+                  </tr>
+                  <tr>
+                      <td className="text-left bg-yellow">Lighting/Lux Level is enough (as required) and all lighting is free from dust</td>
+                      <td className="text-left bg-yellow">Lux Level with Monitoring sheet</td>
+                      <td><span className="check">{q(14) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(14) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(14) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(14) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(14) === 4 ? '✓' : ''}</span></td><td></td>
+                  </tr>
+
+                  <tr>
+                      <td rowSpan={4} className="bg-light-blue">"4S"<br/>STANDARDIZATION<br/>"SEIKETSU"</td>
+                      <td className="text-left">Are 6S Audit Previous Observations closed and actions initiated/implemented?</td>
+                      <td className="text-left">WI/ Visual Control</td>
+                      <td><span className="check">{q(15) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(15) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(15) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(15) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(15) === 4 ? '✓' : ''}</span></td><td></td>
+                  </tr>
+                  <tr>
+                      <td className="text-left">Independency followed in Audit and results are declared and Communicated to entire team.</td>
+                      <td className="text-left">Audit schedule & Result display</td>
+                      <td><span className="check">{q(16) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(16) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(16) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(16) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(16) === 4 ? '✓' : ''}</span></td><td></td>
+                  </tr>
+                  <tr>
+                      <td className="text-left">Work Zone is properly marked and indicates walkways, storage and other area clearly.</td>
+                      <td className="text-left">Area Marking as per 5S Layout Plan</td>
+                      <td><span className="check">{q(17) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(17) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(17) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(17) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(17) === 4 ? '✓' : ''}</span></td><td></td>
+                  </tr>
+                  <tr>
+                      <td className="text-left">Are Initiatives taken for continual improvement of all 3S and First 3S being maintained ?</td>
+                      <td className="text-left">improvement Details</td>
+                      <td><span className="check">{q(18) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(18) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(18) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(18) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(18) === 4 ? '✓' : ''}</span></td><td></td>
+                  </tr>
+
+                  <tr>
+                      <td rowSpan={4} className="bg-light-blue">"5S"<br/>SUSTAINENANCE<br/>"SHITSUKE"</td>
+                      <td className="text-left">Effectiveness verification system exist/ Regular audits are conducted to ensure 6S compliance?</td>
+                      <td className="text-left">5S Audit and Action plan</td>
+                      <td><span className="check">{q(19) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(19) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(19) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(19) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(19) === 4 ? '✓' : ''}</span></td><td></td>
+                  </tr>
+                  <tr>
+                      <td className="text-left">Does Leaders enforce Training and awareness for to encourage 5S and Safety at shop floor.</td>
+                      <td className="text-left">Training and awareness</td>
+                      <td><span className="check">{q(20) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(20) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(20) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(20) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(20) === 4 ? '✓' : ''}</span></td><td></td>
+                  </tr>
+                  <tr>
+                      <td className="text-left">Is actions implemented for the previous observations are effective ?</td>
+                      <td className="text-left">Previous Action plan Effectiveness</td>
+                      <td><span className="check">{q(21) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(21) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(21) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(21) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(21) === 4 ? '✓' : ''}</span></td><td></td>
+                  </tr>
+                  <tr>
+                      <td className="text-left">Management Support to 6S Programme by providing resources, rewards and recognition</td>
+                      <td className="text-left">Monthly Recognition</td>
+                      <td><span className="check">{q(22) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(22) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(22) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(22) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(22) === 4 ? '✓' : ''}</span></td><td></td>
+                  </tr>
+
+                  <tr>
+                      <td rowSpan={3} className="bg-light-blue">"6S" SAFETY<br/>AT WORK<br/>STATION</td>
+                      <td className="text-left">Are Workmen wear Proper PPEs and Required PPE matrix available & displayed at appropriate area.</td>
+                      <td className="text-left">Skill Matrix/Verbal communication</td>
+                      <td><span className="check">{q(23) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(23) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(23) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(23) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(23) === 4 ? '✓' : ''}</span></td><td></td>
+                  </tr>
+                  <tr>
+                      <td className="text-left">Safety equipment are in ready to use condition and available in required quantity.(PPEs/Emergency Exit/Evacuation Plan)</td>
+                      <td className="text-left">Safety Equipement condition</td>
+                      <td><span className="check">{q(24) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(24) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(24) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(24) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(24) === 4 ? '✓' : ''}</span></td><td></td>
+                  </tr>
+                  <tr>
+                      <td className="text-left">Any material/Unsafe act/condition at shop floor which can cause safety incident to workman (Ensure controls)</td>
+                      <td className="text-left">Identify Safety Hazard</td>
+                      <td><span className="check">{q(25) === 0 ? '✓' : ''}</span></td><td><span className="check">{q(25) === 1 ? '✓' : ''}</span></td><td><span className="check">{q(25) === 2 ? '✓' : ''}</span></td><td><span className="check">{q(25) === 3 ? '✓' : ''}</span></td><td><span className="check">{q(25) === 4 ? '✓' : ''}</span></td><td></td>
+                  </tr>
+
+                  <tr>
+                      <td colSpan={3} className="bg-light-blue bold" style={{ textAlign: 'center' }}>TOTAL MARKS</td>
+                      <td colSpan={6} className="bold" style={{ textAlign: 'center' }}>100</td>
+                  </tr>
+                  <tr>
+                      <td colSpan={3} className="bg-light-blue bold" style={{ textAlign: 'center' }}>TOTAL OBTAIN MARKS</td>
+                      <td colSpan={6} className="bold" style={{ textAlign: 'center' }}>{audit.totalScore}</td>
+                  </tr>
+                  <tr>
+                      <td colSpan={3} className="bg-light-blue bold" style={{ textAlign: 'center' }}>SCORE %</td>
+                      <td colSpan={6} className="bold" style={{ textAlign: 'center' }}>{audit.totalScore}</td>
+                  </tr>
+              </tbody>
+          </table>
+
+          <table className="keep-together">
+              <tbody>
+              <tr>
+                  <td colSpan={3} className="bg-blue">SCORING CRITERIA</td>
+              </tr>
+              <tr>
+                  <td className="bg-red" style={{ width: '5%' }}>ITEM</td>
+                  <td className="bg-red" style={{ width: '15%' }}>TYPE</td>
+                  <td className="bg-red text-left">CRITERIA</td>
+              </tr>
+              <tr>
+                  <td>0</td>
+                  <td className="bg-yellow">POOR</td>
+                  <td className="text-left">Activities not conducted at All- Immediate Action Required</td>
+              </tr>
+              <tr>
+                  <td>1</td>
+                  <td className="bg-yellow">MARGINAL</td>
+                  <td className="text-left">Activities adherence below 50% - obstacle to achieve process Targets - Action Plan Required within 15 days</td>
+              </tr>
+              <tr>
+                  <td>2</td>
+                  <td className="bg-yellow">AVERAGE</td>
+                  <td className="text-left">Activities adherence 51-70% - If Attention not paid Could become a Major Issue - Action Plan will be reviewed during next Audit Cycle</td>
+              </tr>
+              <tr>
+                  <td>3</td>
+                  <td className="bg-yellow">GOOD</td>
+                  <td className="text-left">Activities adherence 71-90% - Activities conducted in a systematic way but could improved.</td>
+              </tr>
+              <tr>
+                  <td>4</td>
+                  <td className="bg-yellow">EXCELLENT</td>
+                  <td className="text-left">Activities adherence 91-100% - Best Practices to be Benchmarked for Other Areas and Scope for Improvement to be Focused.</td>
+              </tr>
+              </tbody>
+          </table>
+
+          <table className="keep-together">
+              <tbody>
+              <tr>
+                  <td className="bg-grey" style={{ width: '5%' }}>Sl.<br/>No.</td>
+                  <td className="bg-grey" style={{ width: '30%' }}>Non-Conformance / Problem statement</td>
+                  <td className="bg-grey" style={{ width: '15%' }}>Correction</td>
+                  <td className="bg-grey" style={{ width: '15%' }}>Corrective Action(s)</td>
+                  <td className="bg-grey" style={{ width: '10%' }}>Target Date</td>
+                  <td className="bg-grey" style={{ width: '15%' }}>Responsibility</td>
+                  <td className="bg-grey" style={{ width: '10%' }}>Status</td>
+              </tr>
+              {audit.actionPlanItems && audit.actionPlanItems.length > 0 ? (
+                audit.actionPlanItems.map((ap: any, i: number) => (
+                  <tr key={i}>
+                    <td>{ap.slNo || '\u00A0'}</td>
+                    <td>{ap.nonConformance}</td>
+                    <td>{ap.correction}</td>
+                    <td>{ap.correctiveAction}</td>
+                    <td>{ap.targetDate}</td>
+                    <td>{ap.responsibility}</td>
+                    <td>{ap.status}</td>
+                  </tr>
+                ))
+              ) : (
+                <>
+                  <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                  <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                  <tr><td>&nbsp;</td><td></td><td></td><td></td><td></td><td></td><td></td></tr>
+                </>
+              )}
+              </tbody>
+          </table>
+
+          <table className="keep-together">
+              <tbody>
+              <tr>
+                  <td className="bg-blue">REVIEW COMMENT HOD/PLANT MANAGEMENT/ SYSTEMS</td>
+              </tr>
+              <tr>
+                  <td className="text-left print:hidden p-2">
+                      <textarea className="w-full border border-gray-300 p-2 text-sm" value={comment1} onChange={e => setComment1(e.target.value)} placeholder="Comment 1" />
+                  </td>
+                  <td className="text-left hidden print:table-cell p-2 font-bold">{comment1 || '\u00A0'}</td>
+              </tr>
+              <tr>
+                  <td className="text-left print:hidden p-2">
+                      <textarea className="w-full border border-gray-300 p-2 text-sm" value={comment2} onChange={e => setComment2(e.target.value)} placeholder="Comment 2" />
+                  </td>
+                  <td className="text-left hidden print:table-cell p-2 font-bold">{comment2 || '\u00A0'}</td>
+              </tr>
+              <tr>
+                  <td className="text-left print:hidden p-2">
+                      <textarea className="w-full border border-gray-300 p-2 text-sm" value={comment3} onChange={e => setComment3(e.target.value)} placeholder="Comment 3" />
+                  </td>
+                  <td className="text-left hidden print:table-cell p-2 font-bold">{comment3 || '\u00A0'}</td>
+              </tr>
+              </tbody>
+          </table>
+
+          <table className="keep-together">
+              <tbody>
+              <tr>
+                  <td className="bg-blue">GUIDELINES FOR EFFECTIVE IMPLEMENTATION & VERIFICATION OF 6S PROCESS</td>
+              </tr>
+              <tr><td className="text-left">Following Documents shall be available with Auditee during 6S Audit</td></tr>
+              <tr><td className="text-left">1. Updated Hazard Identification and Risk assessment sheet</td></tr>
+              <tr><td className="text-left">2. Updated Environment Aspect and Impact Register</td></tr>
+              <tr><td className="text-left bg-yellow">3. History of Accident/Incident / Nearmiss/ First Aid of last Accident/ Repetitive Environmetal Incidents.</td></tr>
+              <tr><td className="text-left">4. Action plan of Previous Non Conformity/ Improvement Plan.</td></tr>
+              <tr><td className="text-left">5.History of any type of leakage/ spillage in area.</td></tr>
+              <tr><td className="text-left">6.JH/ CLIT / Cleaning Checksheet /Visual check</td></tr>
+              <tr><td className="text-left">7.Red Tag Activity Plan and disposition record</td></tr>
+              <tr><td className="text-left">8.Shop Floor Layout Change/ EOHS Change Management Register</td></tr>
+              </tbody>
+          </table>
+
+        </div>
       </div>
     </div>
   );
