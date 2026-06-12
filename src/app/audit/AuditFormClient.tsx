@@ -1,6 +1,6 @@
 "use client";
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 
 const PHASES = [
   {
@@ -76,6 +76,7 @@ export default function AuditFormClient({ auditorName }: { auditorName: string }
   ]);
 
   const [loading, setLoading] = useState(false);
+  const submittingRef = useRef(false);
 
   const calculateTotalScore = () => scores.reduce((a, b) => a + b, 0);
   const totalScore = calculateTotalScore();
@@ -100,6 +101,8 @@ export default function AuditFormClient({ auditorName }: { auditorName: string }
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    if (submittingRef.current) return;
+    submittingRef.current = true;
     setLoading(true);
 
     try {
@@ -120,10 +123,12 @@ export default function AuditFormClient({ auditorName }: { auditorName: string }
       } else {
         const errorData = await res.json();
         alert("Failed to submit: " + (errorData.error || "Unknown error"));
+        submittingRef.current = false;
         setLoading(false);
       }
     } catch (err) {
       alert("An error occurred during submission.");
+      submittingRef.current = false;
       setLoading(false);
     }
   };
