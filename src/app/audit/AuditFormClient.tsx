@@ -64,6 +64,7 @@ export default function AuditFormClient({ auditorName }: { auditorName: string }
   const [workZone, setWorkZone] = useState('');
   const [auditDate, setAuditDate] = useState(new Date().toISOString().split('T')[0]);
   const [zoneLeader, setZoneLeader] = useState('');
+  const [auditor, setAuditor] = useState(auditorName);
   
   const [scores, setScores] = useState<number[]>(Array(25).fill(0));
   const [remarks, setRemarks] = useState<string[]>(Array(25).fill(''));
@@ -103,7 +104,7 @@ export default function AuditFormClient({ auditorName }: { auditorName: string }
 
     try {
       const payload = {
-        workZone, auditDate, zoneLeader, auditorName,
+        workZone, auditDate, zoneLeader, auditorName: auditor,
         scores, remarks, totalScore, actionPlan
       };
 
@@ -128,7 +129,7 @@ export default function AuditFormClient({ auditorName }: { auditorName: string }
   };
 
   return (
-    <form onSubmit={handleSubmit} className="space-y-6 bg-white p-2 sm:p-8 rounded-xl shadow-sm border border-slate-200" style={{ fontFamily: 'Arial, sans-serif' }}>
+    <form onSubmit={handleSubmit} className="space-y-6 bg-white text-black p-2 sm:p-8 rounded-xl shadow-sm border border-slate-200" style={{ fontFamily: 'Arial, sans-serif' }}>
       
       {/* Header */}
       <div className="flex justify-between items-center mb-4">
@@ -155,7 +156,7 @@ export default function AuditFormClient({ auditorName }: { auditorName: string }
         </div>
         <div className="border border-black p-2 font-bold flex gap-2">
           <span className="whitespace-nowrap">AUDITOR:</span> 
-          <span className="text-black font-bold w-full bg-slate-100 px-1">{auditorName}</span>
+          <input required type="text" value={auditor} onChange={e => setAuditor(e.target.value)} className="text-black font-bold w-full outline-none bg-slate-100 focus:bg-white px-1" />
         </div>
       </div>
 

@@ -26,9 +26,11 @@ export async function POST(req: Request) {
     const data = await req.json();
 
     const result = await sql.begin(async (sql) => {
+      const newId = crypto.randomUUID();
+
       const [newAudit] = await sql`
         INSERT INTO "Audit" (
-          "workZone", "auditDate", "zoneLeader", "auditorName",
+          "id", "workZone", "auditDate", "zoneLeader", "auditorName",
           "q1", "q2", "q3", "q4", "q5",
           "q6", "q7", "q8", "q9", "q10",
           "q11", "q12", "q13", "q14", "q15",
@@ -36,7 +38,7 @@ export async function POST(req: Request) {
           "q21", "q22", "q23", "q24", "q25",
           "totalScore", "status", "remarks"
         ) VALUES (
-          ${data.workZone}, ${data.auditDate}, ${data.zoneLeader}, ${data.auditorName},
+          ${newId}, ${data.workZone}, ${data.auditDate}, ${data.zoneLeader}, ${data.auditorName},
           ${data.scores[0]}, ${data.scores[1]}, ${data.scores[2]}, ${data.scores[3]}, ${data.scores[4]},
           ${data.scores[5]}, ${data.scores[6]}, ${data.scores[7]}, ${data.scores[8]}, ${data.scores[9]},
           ${data.scores[10]}, ${data.scores[11]}, ${data.scores[12]}, ${data.scores[13]}, ${data.scores[14]},
@@ -48,11 +50,12 @@ export async function POST(req: Request) {
 
       if (data.actionPlan && data.actionPlan.length > 0) {
         for (const ap of data.actionPlan) {
+          const apId = crypto.randomUUID();
           await sql`
             INSERT INTO "ActionPlanItem" (
-              "auditId", "slNo", "nonConformance", "correction", "correctiveAction", "targetDate", "responsibility", "status"
+              "id", "auditId", "slNo", "nonConformance", "correction", "correctiveAction", "targetDate", "responsibility", "status"
             ) VALUES (
-              ${newAudit.id}, ${ap.slNo}, ${ap.nonConformance}, ${ap.correction}, ${ap.correctiveAction}, ${ap.targetDate}, ${ap.responsibility}, ${ap.status}
+              ${apId}, ${newAudit.id}, ${ap.slNo}, ${ap.nonConformance}, ${ap.correction}, ${ap.correctiveAction}, ${ap.targetDate}, ${ap.responsibility}, ${ap.status}
             )
           `;
         }
