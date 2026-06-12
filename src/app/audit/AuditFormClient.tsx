@@ -162,7 +162,7 @@ export default function AuditFormClient({ auditorName }: { auditorName: string }
 
       {/* Main Checklist */}
       <div className="overflow-x-auto border border-black mb-6">
-        <table className="w-full text-xs text-center border-collapse min-w-[800px]">
+        <table className="w-full text-xs text-center border-collapse min-w-[800px] text-black">
           <thead>
             <tr>
               <td className="bg-[#ffc000] font-bold border border-black p-2 w-[8%]" rowSpan={2}>PHASE</td>
@@ -219,7 +219,7 @@ export default function AuditFormClient({ auditorName }: { auditorName: string }
 
       {/* Action Plan Table */}
       <div className="overflow-x-auto mb-6">
-        <table className="w-full text-xs border-collapse border border-black min-w-[800px]">
+        <table className="w-full text-xs border-collapse border border-black min-w-[800px] text-black">
           <thead>
             <tr>
               <td className="bg-[#d9d9d9] font-bold border border-black p-2 text-center w-[5%]">Sl. No.</td>
